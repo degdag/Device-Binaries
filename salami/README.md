@@ -1,68 +1,82 @@
 ## Firmware Infos
 
-- **Device:** OnePlus 11 5G
+- **Device:** OnePlus 11
 - **Region:** EU (Europe)
-- **Version:** `CPH2449_15.0.0.840` / `BOOT.MXF.2.1.1`
+- **Version:** `CPH2449_16.0.5.1002` / `BOOT.MXF.2.1.1-00317-KAILUA-1.53303.15`
 
-## Patches/Fixes
+## Patches / Fixes
 
-### ButtonsDxe:
-
-- **Reason:** To make the Power Button usable in UEFI.
-- **Patch:** The Special Qcom Key Code (`0x102`) has been Changed to the Key Code Enter (`0xD`).
-- **Patch Creator:** [Gustave Monce](https://github.com/gus33000/)
-
-### ClockDxe:
-
-- **Reason:** To keep Display turned on while UEFI Boot.
-- **Patch:** The DCD Disable Dependencies Function Call has been Removed.
-- **Patch Creator:** [Gustave Monce](https://github.com/gus33000/)
-
-### DisplayDxe:
-
-> [!NOTE]
-> This Patch requires `EnableDisplayThread` to be Disabled in the Configuration Map.
-
-- **Reason:** To get more Control over the Display in UEFI.
-- **Patch Nr. 1:** A DSI Close Function call has been removed to avoid turning off Display.
-- **Patch Nr. 2:** DSI Panel Reset Function has been removed to avoid turning off the Display.
-- **Patch Nr. 3 & 4:** DSI Panel Init Function has been modded to not turn off Display.
-- **Patch Nr. 5:** DSI SetMode Function has been modded to not change Clock Frequency
-- **Patch Nr. 6:** MMU related setup routine was patched to not recreate already existing MMU domains.
-- **Patch Creator:** [Gustave Monce](https://github.com/gus33000) & [Shandorman](https://github.com/jiganomegsdfdf)
-
-### PmicDxe:
-
-> [!NOTE]
-> Must be paired with the SPMIDxe Patch.
-
-- **Reason:** To make UEFI not Crash during UEFI Boot.
-- **Patch Nr. 1:** Minimal PMIC Init has been Removed.
-- **Patch Nr. 2:** Make failing SPMI Function call always return EFI_SUCCESS.
-- **Patch Creators:** [Kancy Joe](https://github.com/sunflower2333/), [Shandorman](https://github.com/jiganomegsdfdf/)
-
-### SPMIDxe:
+### ButtonsDxe
 
 > [!IMPORTANT]
-> Must be paired with the PmicDxe Patch.
+> Patch Nr. 2 is OnePlus only.
 
-- **Reason:** To make UEFI not Crash during UEFI Boot.
+- **Reason:** To make the Power Button usable in UEFI.
+- **Patch Nr. 1:** The Key Code `SCAN_SUSPEND` has been Changed to the `CHAR_CARRIAGE_RETURN` Key Code.
+- **Patch Nr. 2:** Removed S4 Reset Enable Function.
+- **Patch Creators:** [Gustave Monce](https://github.com/gus33000/), [Robotix](https://github.com/Robotix22/)
+
+### ClockDxe
+
+- **Reason:** To keep Display turned on while UEFI Boot.
+- **Patch Nr. 1:** The DCD Enable Dependencies Function Call has been Removed.
+- **Patch Nr. 2:** The DCD Disable Dependencies Function Call has been Removed.
+- **Patch Creators:** [Robotix](https://github.com/Robotix22/), [Gustave Monce](https://github.com/gus33000/)
+
+### PmicDxe
+
+> [!IMPORTANT]
+> Patch Nr. 4 is OnePlus only.
+
+- **Reason:** To prevent a UEFI Crash during Boot.
+- **Patch Nr. 1:** Removed PMIC Post Init.
+- **Patch Nr. 2:** Removed IRQ Disable Function.
+- **Patch Nr. 3:** Removed Lock Config Function.
+- **Patch Nr. 4:** Forced Charger Init Finish Flag to `TRUE` instead of `FALSE`.
+- **Patch Creators:** [Kancy Joe](https://github.com/sunflower2333/), [Robotix](https://github.com/Robotix22/)
+
+### QcomChargerDxe
+
+> [!IMPORTANT]
+> Patch Nr. 2 & 3 are OnePlus only.
+
+- **Reason:** To prevent a UEFI Crash during Boot.
+- **Patch Nr. 1:** Removed PMIC Charger Watchdog Toggle.
+- **Patch Nr. 2:** Removed Protected PMIC Register Write.
+- **Patch Nr. 3:** Removed Charger IC Init Function.
+- **Patch Creator:** [Robotix](https://github.com/Robotix22/)
+
+### RscDxe
+
+- **Reason:** To keep Display turned on while UEFI Boot.
+- **Patch:** Removed Camera Clock Init Call.
+- **Patch Creator:** [Robotix](https://github.com/Robotix22/)
+
+### SPMIDxe
+
+- **Reason:** To prevent a UEFI Crash during Boot.
 - **Patch:** Removed the SPMI PIC Init Function.
 - **Patch Creator:** [Kancy Joe](https://github.com/sunflower2333/)
 
-### UFSDxe:
+### TzDxeLA
 
-- **Reason:** To allow the usage of UFS.
-- **Patch:** The UFS Sleep call has been Replaced with the UFS Wakeup Call.
-- **Patch Creators:** [Kancy Joe](https://github.com/sunflower2333/)
+- **Reason:** To prevent the Re-creation of already Existing TZ Applets.
+- **Patch:** The Global TZ Applet Variable has been Changed to `TRUE` from `FALSE`.
+- **Patch Creator:** [N1kroks](https://github.com/N1kroks/)
 
-### UsbConfigDxe:
+### UFSDxe
+
+- **Reason:** To allow the usage of the UFS.
+- **Patch:** The Unit Ready SCSI Command has been Replaced with the Start/Stop Unit SCSI Command.
+- **Patch Creator:** [Kancy Joe](https://github.com/sunflower2333/)
+
+### UsbConfigDxe
 
 - **Reason:** To allow the usage of the USB Port.
 - **Patch:** Removed IOMMU Detach from Exit Boot Services.
 - **Patch Creator:** [Gustave Monce](https://github.com/gus33000/)
 
-### UsbMsdDxe:
+### UsbMsdDxe
 
 - **Reason:** For better Mass Storage usage.
 - **Patch:** Changed Removable State to Non-Removable.
